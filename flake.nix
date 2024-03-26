@@ -9,31 +9,17 @@
 
   outputs = inputs @ { self, nixpkgs, systems, ... }: {
     defaultPackage.x86_64-linux = with import nixpkgs { system = "x86_64-linux"; };
-      stdenv.mkDerivation (finalAttrs: {
+      buildNpmPackage rec {
         pname = "clever-tools";
         version = "3.4.0";
 
+        nodejs = nodejs-18_x;
+
         src = ./.;
 
-        cleverTools = buildNpmPackage {
-          name = finalAttrs.pname;
-          src = ./.;
-          rev = "be0db0115a1f2cf2899e67517b9fcb7c3e1f6edc";
-          npmDepsHash = "sha256-Ca8emrCdIaQ4oKYc8u00BW7WdcINKv1tAnJE8ppsuFw=";
-          dontNpmBuild = true;
-        };
-
-        installPhase = ''
-          cp -r ${finalAttrs.cleverTools} $out
-        '';
-
-        nativeBuildInputs = [
-          nodejs
-        ];
-
-        buildInputs = [
-          nodejs
-        ];
+        rev = "be0db0115a1f2cf2899e67517b9fcb7c3e1f6edc";
+        npmDepsHash = "sha256-Ca8emrCdIaQ4oKYc8u00BW7WdcINKv1tAnJE8ppsuFw=";
+        dontNpmBuild = true;
 
         meta = {
           description = "";
@@ -42,7 +28,7 @@
           maintainers = with lib.maintainers;
             [ ];
         };
-      });
+      };
   };
 
 }

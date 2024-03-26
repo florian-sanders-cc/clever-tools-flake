@@ -5,7 +5,7 @@ on:
       - master
       - 'hotfix/**'
 jobs:
-  Prefetch-npm-deps:
+  update-nix-flake:
     runs-on: ubuntu-latest
     outputs:
       NPM_DEPS_HASH: ${{ steps.prefetch.outputs.NPM_DEPS_HASH }}

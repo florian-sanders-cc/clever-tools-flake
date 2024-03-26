@@ -1,0 +1,19 @@
+name: Update node version - nix flake
+on:
+  push:
+    branches:
+      - master
+      - 'hotfix/**'
+jobs:
+  check-node-version:
+    runs-on: ubuntu-latest
+    outputs:
+      NODE_VERSION: ${{ steps.prefetch.outputs.NODE_VERSION }}
+    steps:
+      - uses: actions/checkout@v4
+      - id: get_package_json_content
+        run: echo "PACKAGE_JSON_CONTENT=$(cat ./package.json)" >> $GITHUB_OUTPUT
+      - id: extract_node_version
+        run: echo "NODE_VERSION=${{ fromJSON(steps.get_package_json_content.outputs.PACKAGE_JSON_CONTENT).volta.node }}" >> $GITHUB_OUTPUT
+      - name: output node version
+        run: echo ${{ steps.extract_node_version.NODE_VERSION }}
