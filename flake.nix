@@ -19,7 +19,7 @@
           name = finalAttrs.pname;
           src = ./.;
           rev = "be0db0115a1f2cf2899e67517b9fcb7c3e1f6edc";
-          npmDepsHash = "sha256-a5OncYj7YSiDGBbURNUxTP2r2DT	oto";
+          npmDepsHash = "sha256-a5OncYj7YSiDGBbURNUxTP2r2DT/q2Wka84kLta/m/8=";
           dontNpmBuild = true;
         };
 
