@@ -71,8 +71,7 @@
     "mocha": "^8.4.0",
     "pkg": "^5.8.1",
     "semver": "^7.3.5",
-    "text-table": "^0.2.0",
-    "typescript": "^5.4.3"
+    "text-table": "^0.2.0"
   },
   "overrides": {
     "pkg-fetch": "3.5.2"
