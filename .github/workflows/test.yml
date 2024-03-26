@@ -2,17 +2,34 @@ name: GitHub Actions Demo
 run-name: ${{ github.actor }} is testing out GitHub Actions 🚀
 on: [push]
 jobs:
-  Explore-GitHub-Actions:
+  Prefetch-npm-deps:
     runs-on: ubuntu-latest
+    outputs:
+      NPM_DEPS_HASH: ${{ steps.prefetch.outputs.NPM_DEPS_HASH }}
     steps:
-      - run: echo "🎉 The job was automatically triggered by a ${{ github.event_name }} event."
-      - run: echo "🐧 This job is now running on a ${{ runner.os }} server hosted by GitHub!"
-      - run: echo "🔎 The name of your branch is ${{ github.ref }} and your repository is ${{ github.repository }}."
-      - name: Check out repository code
-        uses: actions/checkout@v4
-      - run: echo "💡 The ${{ github.repository }} repository has been cloned to the runner."
-      - run: echo "🖥️ The workflow is now ready to test your code on the runner."
-      - name: List files in the repository
-        run: |
-          ls ${{ github.workspace }}
-      - run: echo "🍏 This job's status is ${{ job.status }}."
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+      - name: Install Nix
+        uses: cachix/install-nix-action@v26
+        with:
+          github_access_token: ${{ secrets.PERSO_TOKEN }}
+          nix_path: nixpkgs=channel:nixos-unstable
+      - name: Install prefetch-npm-deps
+        run: nix-env -i prefetch-npm-deps -f '<nixpkgs>'
+      - name: prefetch
+        id: prefetch
+        run: echo "NPM_DEPS_HASH=$(prefetch-npm-deps package-lock.json)" >> $GITHUB_OUTPUT
+      - name: escape
+        id: escape
+        run: echo "NPM_DEPS_HASH_ESCAPED=$(echo ${{ steps.prefetch.outputs.NPM_DEPS_HASH }} | sed 's/\//\\\\\//gip')" >> $GITHUB_OUTPUT
+      - name: update
+        run: sed -i "s/sha[^\"]\+/${{ steps.escape.outputs.NPM_DEPS_HASH_ESCAPED }}/" flake.nix
+      - run: git add .
+      - run: nix flake update
+      - run: |
+          git config --global user.name 'Florian Sanders'
+          git config --global user.email 'florian.sanders@clever-cloud.com'
+          git status
+          git commit -m "NEW RELEASE FLAKE YOUPI"
+          git push
