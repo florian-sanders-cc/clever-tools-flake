@@ -8,8 +8,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-          with:
-            fetch-depth: 2
+        with:
+          fetch-depth: 2
       - name: generate git diff
         id: generated_git_diff
         run: |
