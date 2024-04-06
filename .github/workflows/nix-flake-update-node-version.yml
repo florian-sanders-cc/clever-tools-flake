@@ -43,3 +43,4 @@ jobs:
           git status
           git add flake.nix
           git commit -m "chore(flake): update node version"
+          git push
