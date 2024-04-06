@@ -28,9 +28,6 @@ jobs:
         run: echo "NPM_DEPS_HASH_ESCAPED=$(echo ${{ steps.prefetch.outputs.NPM_DEPS_HASH }} | sed 's/\//\\\\\//gip')" >> $GITHUB_OUTPUT
       - name: update
         run: sed -i "s/sha[^\"]\+/${{ steps.escape.outputs.NPM_DEPS_HASH_ESCAPED }}/" flake.nix
-      - name: check for update
-        run: if [-n $(git status --porcelain)] then
-
       - run: git add .
       - run: nix flake update
       - run: |
@@ -40,7 +37,7 @@ jobs:
           git push
   release-please:
     runs-on: ubuntu-latest
-    needs: update-nix-flake
+    # needs: update-nix-flake
     steps:
       - uses: google-github-actions/release-please-action@v3
         with:
