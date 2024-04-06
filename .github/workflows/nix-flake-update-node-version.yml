@@ -6,10 +6,10 @@ on:
     # paths:
     #   - 'package.json'
 jobs:
-  get-node-version:
+  get-major-node-version:
     runs-on: ubuntu-latest
     outputs:
-      NODE_VERSION: ${{ steps.output_node_version.outputs.NODE_VERSION }}
+      nodeVersion: ${{ steps.extract_major_node_version.outputs.MAJOR_NODE_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - id: get_package_json_content
@@ -21,15 +21,21 @@ jobs:
           } >> $GITHUB_OUTPUT
       - id: extract_node_version
         run: echo "NODE_VERSION=${{ fromJSON(steps.get_package_json_content.outputs.PACKAGE_JSON_CONTENT).volta.node }}" >> $GITHUB_OUTPUT
-      - name: get major node version
-        id: get_major_node_version
-        run: echo "MAJOR_NODE_VERSION=$(echo ${{ steps.extract_node_version.outputs.NODE_VERSION }} | sed 's/\..\+//g')" >> $GITHUB_OUTPUT
+      - name: extract major node version
+        id: extract_major_node_version
+        run: |
+          echo "MAJOR_NODE_VERSION=$(echo ${{ steps.extract_node_version.outputs.NODE_VERSION }} | sed 's/\..\+//g')" >> $GITHUB_OUTPUT
+      - name: check
+        run: echo ${{ steps.extract_major_node_version.outputs.MAJOR_NODE_VERSION }}
   update-nix-flake-node-version:
     runs-on: ubuntu-latest
-    needs: get-node-version
+    needs: get-major-node-version
     steps:
       - uses: actions/checkout@v4
       - name: replace nix flake node version
-        run: sed -i "s/(?<=nodejs = )nodejs.\+;/nodejs-${{ steps.get_major_node_version.outputs.MAJOR_NODE_VERSION }}_x;/" flake.nix
+        run: |
+          echo ${{ needs.get_major_node_version.outputs.handle }}
+          echo ${{ needs.get_major_node_version.outputs.nodeVersion }}
+          sed -r -i "s/(nodejs-.._x)/nodejs-${{ needs.get-major-node-version.outputs.nodeVersion }}_x/gm" flake.nix
       - name: run git status
         run: git status
