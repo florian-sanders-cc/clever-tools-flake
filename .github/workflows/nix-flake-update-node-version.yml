@@ -3,8 +3,8 @@ on:
   push:
     branches:
       - 'release-please--branches--master--components--clever-tools'
-    # paths:
-    #   - 'package.json'
+    paths:
+      - 'package.json'
 jobs:
   get-major-node-version:
     runs-on: ubuntu-latest
@@ -32,10 +32,14 @@ jobs:
     needs: get-major-node-version
     steps:
       - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
       - name: replace nix flake node version
-        run: |
-          echo ${{ needs.get_major_node_version.outputs.handle }}
-          echo ${{ needs.get_major_node_version.outputs.nodeVersion }}
-          sed -r -i "s/(nodejs-.._x)/nodejs-${{ needs.get-major-node-version.outputs.nodeVersion }}_x/gm" flake.nix
-      - name: run git status
-        run: git status
+        run: sed -r -i "s/(nodejs-.._x)/nodejs-${{ needs.get-major-node-version.outputs.nodeVersion }}_x/gm" flake.nix
+      - run: |
+          git config --global user.name 'Florian Sanders'
+          git config --global user.email 'florian.sanders@clever-cloud.com'
+          git status
+          git add flake.nix
+          git commit -m "chore(flake): update node version"
+          git push
