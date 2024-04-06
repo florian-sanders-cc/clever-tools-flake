@@ -1,6 +1,69 @@
 # clever-tools changelog
 
 
+## 1.0.0 (2024-04-06)
+
+
+### 🚀 Features
+
+* add new Gravelines HDS region to autocomplete ([fbebd40](https://github.com/florian-sanders-cc/clever-tools-flake/commit/fbebd406f674bbebc1e9e88a84f2e8270e6b0f7a))
+* **addon-create:** add support for JSON format (-F json) ([334cec5](https://github.com/florian-sanders-cc/clever-tools-flake/commit/334cec56a43e0e511a4eaae17350a6caea912576))
+* **addon:** add `clever addon env` command ([2affba7](https://github.com/florian-sanders-cc/clever-tools-flake/commit/2affba7153e9b09ad1603565a1b006a77235ec91))
+* **applications:** display git+ssh deployment URL ([8c702ce](https://github.com/florian-sanders-cc/clever-tools-flake/commit/8c702ce94c6d4f018bc1b819cee6a0ed7486b050)), closes [#619](https://github.com/florian-sanders-cc/clever-tools-flake/issues/619)
+* **create:** add support for JSON format (-F json) ([1f7842a](https://github.com/florian-sanders-cc/clever-tools-flake/commit/1f7842a3a9d0e4f8b1d235f13fd6c5dc06dc0fc0))
+* **create:** add support for JSON format (-F json) ([88615b3](https://github.com/florian-sanders-cc/clever-tools-flake/commit/88615b35c99d76868f2077860e3977c2c3884862))
+* **create:** display name once app (or add-on) is created ([1a3eb9e](https://github.com/florian-sanders-cc/clever-tools-flake/commit/1a3eb9ea9acf44aebc431b617cbf7d522b27d880))
+* **create:** make app name optional (use current directory name if not specified) ([0a20393](https://github.com/florian-sanders-cc/clever-tools-flake/commit/0a2039302f8c237616e0ba48de97a2b1de89ec88))
+* **database:** add command to download backups ([5cb324f](https://github.com/florian-sanders-cc/clever-tools-flake/commit/5cb324f31a5feb1c5c36f2a08936dda482d2d87a))
+* **database:** improve implicit ID params (owner and add-on ID / real ID) ([fb304ce](https://github.com/florian-sanders-cc/clever-tools-flake/commit/fb304cef6adea575753c6d9a13dd82d6ad7c4c6c))
+* **deploy:** add same-commit-policy option ([76ff6a2](https://github.com/florian-sanders-cc/clever-tools-flake/commit/76ff6a2fd183ee2ba0cb30dce6d07d3ae3e515cc))
+* **deploy:** log application and owner details ([e5929ae](https://github.com/florian-sanders-cc/clever-tools-flake/commit/e5929aee0f015337fc2664224772d2a0a0301d39))
+* **deploy:** support tag option ([52ea270](https://github.com/florian-sanders-cc/clever-tools-flake/commit/52ea270b5148d29b5c52d01321541b2227437f0a))
+* **diag:** add config file and auth source to `clever diag` ([e8e4c23](https://github.com/florian-sanders-cc/clever-tools-flake/commit/e8e4c2366769ed433a7e3e2b03642b3b231f5cfb))
+* **diag:** add shell to `clever diag` ([6cc066b](https://github.com/florian-sanders-cc/clever-tools-flake/commit/6cc066b95c34886a2251da65a621054adce2701f))
+* **diag:** improve display (color and details) for oAuth token and user ID ([6d4462c](https://github.com/florian-sanders-cc/clever-tools-flake/commit/6d4462c58bc6953797ef935ec31375e8cebc0da9))
+* **drains:** add NewRelic with api key ([445dcb0](https://github.com/florian-sanders-cc/clever-tools-flake/commit/445dcb0753319388c145b0f12b8787454ffa8249))
+* **github-actions:** enable release-please ([8dbfef3](https://github.com/florian-sanders-cc/clever-tools-flake/commit/8dbfef37de24081aee51a8429c4c45c186ef0564))
+* **github-actions:** move to release action ([60fb4a4](https://github.com/florian-sanders-cc/clever-tools-flake/commit/60fb4a4677130cce081c04613f7b782ecda49b77))
+* **github-actions:** test ([7f4ea8f](https://github.com/florian-sanders-cc/clever-tools-flake/commit/7f4ea8f645bf8c3ac3e447c01081babcd71cce29))
+* **logs:** enable auto retry on network failures ([ccab160](https://github.com/florian-sanders-cc/clever-tools-flake/commit/ccab160f61778ce49f9a364d5207e1d48f51d923))
+* **logs:** support "json" and "json-stream" formats (for apps only) ([a909959](https://github.com/florian-sanders-cc/clever-tools-flake/commit/a909959314a3d5465d040304b2ee0036b35cde28))
+* **logs:** support duration in since parameters ([a223f3a](https://github.com/florian-sanders-cc/clever-tools-flake/commit/a223f3a77a20c6f062e8003a9548072aff0c657f))
+* **logs:** support indexPrefix customization for ElasticSearch log drain ([2dc0bd6](https://github.com/florian-sanders-cc/clever-tools-flake/commit/2dc0bd655b2b49b32bd749d5bf20b22841448446))
+* **logs:** use new Log stack ([d74b87d](https://github.com/florian-sanders-cc/clever-tools-flake/commit/d74b87d7eed3d11909128af6149e959867d8ee50))
+* **ownerId:** add userId as orgaId and introduce owner ([599e56b](https://github.com/florian-sanders-cc/clever-tools-flake/commit/599e56be5c0a9950911d7603c62bf298e307fd04))
+* **parsers:** add duration parser ([62d6089](https://github.com/florian-sanders-cc/clever-tools-flake/commit/62d60893dc6214567869b31a54e208656661b634))
+* **readme:** add newrelic section ([344e622](https://github.com/florian-sanders-cc/clever-tools-flake/commit/344e622faa55e0dee903c945d791fe44ed84392c))
+* **test:** test upd ([b203388](https://github.com/florian-sanders-cc/clever-tools-flake/commit/b203388a3b5bb7dd158d275d879df5487bb823c6))
+* **typescript:** remove to test flake upd ([d5b7f87](https://github.com/florian-sanders-cc/clever-tools-flake/commit/d5b7f87290df7d9185f06a5af308827b624572a5))
+* update runtimes list in autocomplete ([f02f50f](https://github.com/florian-sanders-cc/clever-tools-flake/commit/f02f50f4ea1d887b4bd7ccafc36e72077ff0ab13))
+* update zones list in autocomplete ([3b18adb](https://github.com/florian-sanders-cc/clever-tools-flake/commit/3b18adbdda2c69ac1f6d5bf77604849f5d4033d0))
+
+
+### 🐛 Bug Fixes
+
+* add an alias/name check during app create ([4a5201a](https://github.com/florian-sanders-cc/clever-tools-flake/commit/4a5201aca2ee3225a9b086212bd28a2295089126)), closes [#656](https://github.com/florian-sanders-cc/clever-tools-flake/issues/656)
+* **addon:** fix a typo ([8ece4cd](https://github.com/florian-sanders-cc/clever-tools-flake/commit/8ece4cd56946ada1f2b6bc6f091f103b3fce1c33))
+* **api:** improve error message with `EAI_AGAIN` and `ECONNRESET` ([b134213](https://github.com/florian-sanders-cc/clever-tools-flake/commit/b134213f30d46dd7f5690a38425deb4fd752148c))
+* **database:** remove duplicated `--org` param from `clever database backups` ([022b353](https://github.com/florian-sanders-cc/clever-tools-flake/commit/022b353ad438cdd3a2fae01535561f261b5964b1))
+* delete beta/Jenkins mentions in README.md ([cb32b3b](https://github.com/florian-sanders-cc/clever-tools-flake/commit/cb32b3b0cdaecac5d6198f295eef7c350161ac03))
+* **docker:** inject Docker hub credentials to actions ([e5e546e](https://github.com/florian-sanders-cc/clever-tools-flake/commit/e5e546e88d5ff5f93de1384615619b883ea278bc))
+* **domain:** use response object to access status ([18fba08](https://github.com/florian-sanders-cc/clever-tools-flake/commit/18fba08665ce3e133d68c06db26580d2cc43d7c2))
+* license template ([66e60f3](https://github.com/florian-sanders-cc/clever-tools-flake/commit/66e60f392588c1e49832f1ed982e39f4e6184b64))
+* lint errors ([6bf5034](https://github.com/florian-sanders-cc/clever-tools-flake/commit/6bf5034a9680df2ab9f8007e941129f10d96da80))
+* **logs:** improve error message with `EAI_AGAIN` and `ECONNRESET` ([fada067](https://github.com/florian-sanders-cc/clever-tools-flake/commit/fada06771369173e579f5fd3a708ff3cef40c95f))
+* **logs:** improve open and error debug message ([28dd996](https://github.com/florian-sanders-cc/clever-tools-flake/commit/28dd9968bec8de9545c6b940be732d3f8f87a8f9))
+* **logs:** increase connection timeout ([a4ec4b9](https://github.com/florian-sanders-cc/clever-tools-flake/commit/a4ec4b90b5d3938e27679edeb7d375281def3776))
+* **logs:** only print SSE errors as debug when verbose mode is enabled ([3ea21c6](https://github.com/florian-sanders-cc/clever-tools-flake/commit/3ea21c6a4ff75db8df5f8177bba10ef17c2962e0))
+* **logs:** show addon logs when addonId is provided ([6fb99d5](https://github.com/florian-sanders-cc/clever-tools-flake/commit/6fb99d591c0832e0cfb556f208ae479932b8d5af))
+* pass an HTTP agent with long timeout to isomorphic-git ([1bfbf40](https://github.com/florian-sanders-cc/clever-tools-flake/commit/1bfbf40d388cc78c9b987d3717ecd8b4e1bfe803)), closes [#640](https://github.com/florian-sanders-cc/clever-tools-flake/issues/640)
+* **restart:** quieter mode ([e507113](https://github.com/florian-sanders-cc/clever-tools-flake/commit/e507113675de50c4a7e751add270deac8c260f6e))
+* **test:** test3 ([47cf652](https://github.com/florian-sanders-cc/clever-tools-flake/commit/47cf652dbe8138120810168be3fab46540846981))
+* **test:** test4 ([a053f0a](https://github.com/florian-sanders-cc/clever-tools-flake/commit/a053f0ad08381dae76b4786acd02f8e927678289))
+* **test:** test5 ([b40c14c](https://github.com/florian-sanders-cc/clever-tools-flake/commit/b40c14c9008b089371710b48fea0d3a0529cd68c))
+* **test:** test6 ([95ea08c](https://github.com/florian-sanders-cc/clever-tools-flake/commit/95ea08cae278b43c5b389747bd662d787e82291e))
+* update @clevercloud/client to 8.0.2 (fix Node.js &lt; 18.16 abort bug) ([5d8631a](https://github.com/florian-sanders-cc/clever-tools-flake/commit/5d8631aa1cab4c68025adef96fb37fbcce947e27))
+
 ## [3.4.0](https://github.com/CleverCloud/clever-tools/compare/3.3.0...3.4.0) (2024-02-16)
 
 
