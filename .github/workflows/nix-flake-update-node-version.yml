@@ -3,10 +3,10 @@ on:
   push:
     branches:
       - 'release-please--branches--master--components--clever-tools'
-    paths:
-      - 'package.json'
+    # paths:
+    #   - 'package.json'
 jobs:
-  check-node-version:
+  get-node-version:
     runs-on: ubuntu-latest
     outputs:
       NODE_VERSION: ${{ steps.output_node_version.outputs.NODE_VERSION }}
@@ -21,6 +21,15 @@ jobs:
           } >> $GITHUB_OUTPUT
       - id: extract_node_version
         run: echo "NODE_VERSION=${{ fromJSON(steps.get_package_json_content.outputs.PACKAGE_JSON_CONTENT).volta.node }}" >> $GITHUB_OUTPUT
-      - name: output node version
-        id: output_node_version
-        run: echo ${{ steps.extract_node_version.outputs.NODE_VERSION }}
+      - name: get major node version
+        id: get_major_node_version
+        run: echo "MAJOR_NODE_VERSION=$(echo ${{ steps.extract_node_version.outputs.NODE_VERSION }} | sed 's/\..\+//g')" >> $GITHUB_OUTPUT
+  update-nix-flake-node-version:
+    runs-on: ubuntu-latest
+    needs: get-node-version
+    steps:
+      - uses: actions/checkout@v4
+      - name: replace nix flake node version
+        run: sed -i "s/(?<=nodejs = )nodejs.\+;/nodejs-${{ steps.get_major_node_version.outputs.MAJOR_NODE_VERSION }}_x;/" flake.nix
+      - name: run git status
+        run: git status
