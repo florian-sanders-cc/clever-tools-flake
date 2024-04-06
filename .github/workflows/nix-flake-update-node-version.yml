@@ -1,8 +1,10 @@
 name: Update node version - nix flake
 on:
   push:
-    branches: [ 'release-please--branches--master--components--clever-tools' ]
-    paths: ['./package.json']
+    branches:
+      - 'release-please--branches--master--components--clever-tools'
+    paths:
+      - 'package.json'
 jobs:
   check-node-version:
     runs-on: ubuntu-latest
