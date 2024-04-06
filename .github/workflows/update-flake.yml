@@ -2,17 +2,22 @@ name: Update nix flake
 on:
   push:
     branches:
-      - master
-      - 'hotfix/**'
+      - standalone-flake
 jobs:
-  update-nix-flake:
+  fetch-repo-and-deps-hashes:
     runs-on: ubuntu-latest
     outputs:
-      NPM_DEPS_HASH: ${{ steps.prefetch.outputs.NPM_DEPS_HASH }}
+      REPOSITORY_HASH: ${{ steps.escape-repository-hash.outputs.REPOSITORY_HASH_ESCAPED }}
+      NPM_DEPS_HASH_ESCAPED: ${{ steps.escape-npm-deps-hash.outputs.NPM_DEPS_HASH_ESCAPED }}
     steps:
-      - uses: actions/checkout@v4
+      - name: checkout clever-tools repository
+        uses: actions/checkout@v4
         with:
-          token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+          repository: 'CleverCloud/clever-tools'
+      # - uses: actions/checkout@v4
+      #   with:
+      #     token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+      - run: ls
       - name: Install Nix
         uses: cachix/install-nix-action@v26
         with:
@@ -20,19 +25,43 @@ jobs:
           nix_path: nixpkgs=channel:nixos-unstable
       - name: Install prefetch-npm-deps
         run: nix-env -i prefetch-npm-deps -f '<nixpkgs>'
-      - name: prefetch
-        id: prefetch
+      - name: Install nix-prefetch-git
+        run: nix-env -i nix-prefetch-git -f '<nixpkgs>'
+      - name: nix-prefetch-git
+        id: nix-prefetch-git
+        run: |
+          {
+            echo 'NIX_PREFETCH_GIT_RESULT<<EOF'
+            echo "$(nix-prefetch-git --url https://github.com/CleverCloud/clever-tools --rev 3.4.0 --quiet)"
+            echo EOF
+          } >> $GITHUB_OUTPUT
+      - name: get-repository-hash
+        id: get-repository-hash
+        run: echo "REPOSITORY_HASH=${{ fromJSON(steps.nix-prefetch-git.outputs.NIX_PREFETCH_GIT_RESULT).hash }}" >> $GITHUB_OUTPUT
+      - name: escape repository hash
+        id: escape-repository-hash
+        run: echo "REPOSITORY_HASH_ESCAPED=$(echo ${{ steps.get-repository-hash.outputs.REPOSITORY_HASH }} | sed 's/\//\\\\\//gip')" >> $GITHUB_OUTPUT
+      - name: get-npm-deps-hash
+        id: get-npm-deps-hash
         run: echo "NPM_DEPS_HASH=$(prefetch-npm-deps package-lock.json)" >> $GITHUB_OUTPUT
-      - name: escape
-        id: escape
-        run: echo "NPM_DEPS_HASH_ESCAPED=$(echo ${{ steps.prefetch.outputs.NPM_DEPS_HASH }} | sed 's/\//\\\\\//gip')" >> $GITHUB_OUTPUT
+      - name: escape npm deps hash
+        id: escape-npm-deps-hash
+        run: echo "NPM_DEPS_HASH_ESCAPED=$(echo ${{ steps.get-npm-deps-hash.outputs.NPM_DEPS_HASH }} | sed 's/\//\\\\\//gip')" >> $GITHUB_OUTPUT
+  update-flake-with-new-hashes:
+    runs-on: ubuntu-latest
+    needs: fetch-repo-and-deps-hashes
+    steps:
+      - uses: actions/checkout@v4
       - name: update
-        run: sed -i "s/sha[^\"]\+/${{ steps.escape.outputs.NPM_DEPS_HASH_ESCAPED }}/" flake.nix
-      - run: git add .
-      - run: nix flake update
-      - run: |
-          git config --global user.name 'Florian Sanders'
-          git config --global user.email 'florian.sanders@clever-cloud.com'
-          git status
-          git commit -m "chore(flake): update nix flake"
-          git push
+        run: sed -i "s/npmDepsHash = .\+$/npmDepsHash = ${{ needs.fetch-repo-and-deps-hashes.outputs.NPM_DEPS_HASH_ESCAPED }};/" flake.nix
+      - name: update git repo hash
+        run: sed -i "s/hash = .\+/hash = ${{ needs.fetch-repo-and-deps-hashes.outputs.REPOSITORY_HASH }};/" flake.nix
+      - run: cat flake.nix
+      # - run: git add .
+      # - run: nix flake update
+      # - run: |
+      #     git config --global user.name 'Florian Sanders'
+      #     git config --global user.email 'florian.sanders@clever-cloud.com'
+      #     git status
+      #     git commit -m "chore(flake): update nix flake"
+      #     git push
