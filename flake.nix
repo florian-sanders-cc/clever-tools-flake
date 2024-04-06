@@ -13,7 +13,7 @@
         pname = "clever-tools";
         version = "3.4.0";
 
-        nodejs = nodejs-18_x;
+        nodejs = nodejs-20_x;
 
         src = ./.;
 
