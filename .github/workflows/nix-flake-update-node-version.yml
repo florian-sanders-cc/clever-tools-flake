@@ -1,24 +1,9 @@
 name: Update node version - nix flake
 on:
   push:
-    branches:
-      - release-please--branches--master--components--clever-tools
+    branches: [ 'release-please--branches--master--components--clever-tools' ]
+    paths: ['./package.json']
 jobs:
-  check-if-update-required:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: generate git diff
-        id: generated_git_diff
-        run: |
-          echo "DIFF_RESULT=$(git diff origin/master HEAD -- ./package.json)" >> $GITHUB_OUTPUT
-      - name: check git diff
-        run: |
-          if [[ "${{ steps.generate_git_diff.outputs.DIFF_RESULT }}" =~ .*"volta".* ]]; then
-            echo "It's there."
-          fi
   check-node-version:
     runs-on: ubuntu-latest
     outputs:
