@@ -1,28 +1,15 @@
 name: Update node version - nix flake
 on:
   push:
-    branches:
-      - release-please--branches--master--components--clever-tools
+    branches-ignore:
+      - 'master'
+    paths:
+      - 'package.json'
 jobs:
-  check-if-update-required:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: generate git diff
-        id: generated_git_diff
-        run: |
-          echo "DIFF_RESULT=$(git diff origin/master HEAD -- ./package.json)" >> $GITHUB_OUTPUT
-      - name: check git diff
-        run: |
-          if [[ "${{ steps.generate_git_diff.outputs.DIFF_RESULT }}" =~ .*"volta".* ]]; then
-            echo "It's there."
-          fi
-  check-node-version:
+  get-major-node-version:
     runs-on: ubuntu-latest
     outputs:
-      NODE_VERSION: ${{ steps.output_node_version.outputs.NODE_VERSION }}
+      nodeVersion: ${{ steps.extract_major_node_version.outputs.MAJOR_NODE_VERSION }}
     steps:
       - uses: actions/checkout@v4
       - id: get_package_json_content
@@ -34,6 +21,25 @@ jobs:
           } >> $GITHUB_OUTPUT
       - id: extract_node_version
         run: echo "NODE_VERSION=${{ fromJSON(steps.get_package_json_content.outputs.PACKAGE_JSON_CONTENT).volta.node }}" >> $GITHUB_OUTPUT
-      - name: output node version
-        id: output_node_version
-        run: echo ${{ steps.extract_node_version.outputs.NODE_VERSION }}
+      - name: extract major node version
+        id: extract_major_node_version
+        run: |
+          echo "MAJOR_NODE_VERSION=$(echo ${{ steps.extract_node_version.outputs.NODE_VERSION }} | sed 's/\..\+//g')" >> $GITHUB_OUTPUT
+      - name: check
+        run: echo ${{ steps.extract_major_node_version.outputs.MAJOR_NODE_VERSION }}
+  update-nix-flake-node-version:
+    runs-on: ubuntu-latest
+    needs: get-major-node-version
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+      - name: replace nix flake node version
+        # TODO: change regex to be more robust
+        run: sed -r -i "s/(nodejs-.._x)/nodejs-${{ needs.get-major-node-version.outputs.nodeVersion }}_x/gm" flake.nix
+      - run: |
+          git config --global user.name 'Florian Sanders'
+          git config --global user.email 'florian.sanders@clever-cloud.com'
+          git status
+          git add flake.nix
+          git commit -m "chore(flake): update node version"
