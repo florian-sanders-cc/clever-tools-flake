@@ -13,7 +13,7 @@ jobs:
       - name: generate git diff
         id: generated_git_diff
         run: |
-          echo "DIFF_RESULT=$(git diff origin/master ./package.json)" >> $GITHUB_OUTPUT
+          echo "DIFF_RESULT=$(git diff origin/master HEAD -- ./package.json)" >> $GITHUB_OUTPUT
       - name: check git diff
         run: |
           if [[ "${{ steps.generate_git_diff.outputs.DIFF_RESULT }}" =~ .*"volta".* ]]; then
