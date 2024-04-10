@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'CleverCloud/clever-tools'
+          ref: ${{ github.ref_name }}
       - run: ls
       - name: Install Nix
         uses: cachix/install-nix-action@v26
@@ -91,4 +92,4 @@ jobs:
           git add .
           git commit -m "new release"
           git tag -a v2.0.0 -m "test"
-          git push -f origin v2.0.0
+          # git push -f origin v2.0.0
