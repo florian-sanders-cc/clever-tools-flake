@@ -2,7 +2,7 @@ name: Update nix flake
 on:
   push:
     branches:
-      - standalone-flake
+      - 'v*.*.*'
 jobs:
   fetch-repo-and-deps-hashes:
     runs-on: ubuntu-latest
@@ -91,4 +91,4 @@ jobs:
           git add .
           git commit -m "new release"
           git tag -a v2.0.0 -m "test"
-          git push origin v2.0.0
+          git push -f origin v2.0.0
