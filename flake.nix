@@ -11,14 +11,20 @@
     defaultPackage.x86_64-linux = with import nixpkgs { system = "x86_64-linux"; };
       buildNpmPackage rec {
         pname = "clever-tools";
-        version = "3.4.0";
+
+        version = "3.0.0";
 
         nodejs = nodejs-18_x;
 
-        src = ./.;
+        src = fetchFromGitHub {
+          owner = "CleverCloud";
+          repo = "clever-tools";
+          rev = "${version}";
+          hash = "sha256-VoPBMC5qMEAdipTer/8z0YrEe2uN69N5WvkdZ6eSmZQ=";
+        };
 
-        rev = "be0db0115a1f2cf2899e67517b9fcb7c3e1f6edc";
-        npmDepsHash = "sha256-Ca8emrCdIaQ4oKYc8u00BW7WdcINKv1tAnJE8ppsuFw=";
+        npmDepsHash = "sha256-cVLC4q2vy+2X/Kn1082jLa8InipOCirZy6oEBI0fW9o=";
+
         dontNpmBuild = true;
 
         meta = {
