@@ -15,6 +15,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: 'CleverCloud/clever-tools'
+          ref: ${{ github.ref_name }}
       - run: ls
       - name: Install Nix
         uses: cachix/install-nix-action@v26
@@ -30,7 +31,7 @@ jobs:
         run: |
           {
             echo 'NIX_PREFETCH_GIT_RESULT<<EOF'
-            echo "$(nix-prefetch-git --url https://github.com/CleverCloud/clever-tools --rev 3.4.0 --quiet)"
+            echo "$(nix-prefetch-git --url https://github.com/CleverCloud/clever-tools --rev ${{ GITHUB_REF_NAME }} --quiet)"
             echo EOF
           } >> $GITHUB_OUTPUT
       - name: get-repository-hash
@@ -89,6 +90,6 @@ jobs:
       - name: create tag
         run: |
           git add .
-          git commit -m "new release"
-          git tag -a v2.0.0 -m "test"
-          git push -f origin v2.0.0
+          git commit -m "new release ${{ GITHUB_REF_NAME }}"
+          git tag -a ${{ GITHUB_REF_NAME }} -m "Release ${{ GITHUB_REF_NAME }}"
+          git push -f origin ${{ GITHUB_REF_NAME }}
