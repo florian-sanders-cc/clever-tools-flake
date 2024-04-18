@@ -10,12 +10,16 @@ jobs:
       REPOSITORY_HASH: ${{ steps.escape-repository-hash.outputs.REPOSITORY_HASH_ESCAPED }}
       NPM_DEPS_HASH_ESCAPED: ${{ steps.escape-npm-deps-hash.outputs.NPM_DEPS_HASH_ESCAPED }}
       MAJOR_NODE_VERSION: ${{ steps.extract-major-node-version.outputs.MAJOR_NODE_VERSION }}
+      PACKAGE_VERSION: ${{ steps.extract-package-version.outputs.PACKAGE_VERSION }}
     steps:
+      - name: get tag version
+        id: get-cleaned-tag
+        run: echo "CLEANED_TAG=$(echo ${{ github.ref_name }} | sed 's/v//')" >> $GITHUB_OUTPUT
       - name: checkout clever-tools repository
         uses: actions/checkout@v4
         with:
           repository: 'CleverCloud/clever-tools'
-          ref: ${{ github.ref_name }}
+          ref: ${{ steps.get-cleaned-tag.outputs.CLEANED_TAG }}
       - run: ls
       - name: Install Nix
         uses: cachix/install-nix-action@v26
@@ -31,7 +35,7 @@ jobs:
         run: |
           {
             echo 'NIX_PREFETCH_GIT_RESULT<<EOF'
-            echo "$(nix-prefetch-git --url https://github.com/CleverCloud/clever-tools --rev ${{ GITHUB_REF_NAME }} --quiet)"
+            echo "$(nix-prefetch-git --url https://github.com/CleverCloud/clever-tools --rev ${{ steps.get-cleaned-tag.outputs.CLEANED_TAG }} --quiet)"
             echo EOF
           } >> $GITHUB_OUTPUT
       - name: get-repository-hash
@@ -61,6 +65,10 @@ jobs:
         id: extract-major-node-version
         run: |
           echo "MAJOR_NODE_VERSION=$(echo ${{ steps.extract_node_version.outputs.NODE_VERSION }} | sed 's/\..\+//g')" >> $GITHUB_OUTPUT
+      - name: extract package version
+        id: extract-package-version
+        run: |
+          echo "PACKAGE_VERSION=${{ fromJSON(steps.get_package_json_content.outputs.PACKAGE_JSON_CONTENT).version }}" >> $GITHUB_OUTPUT
   update-flake-with-new-hashes:
     runs-on: ubuntu-latest
     needs: fetch-repo-and-deps-hashes
@@ -73,6 +81,8 @@ jobs:
       - uses: actions/checkout@v4
         with:
           token: ${{ secrets.WORKFLOW_GIT_ACCESS_TOKEN }}
+      - name: update package version
+        run: sed -r -i "s/version = \"([0-9]\.?)+\";/version = \"${{ needs.fetch-repo-and-deps-hashes.outputs.PACKAGE_VERSION }}\";/" flake.nix
       - name: update npm deps hash
         run: sed -i "s/npmDepsHash = .\+$/npmDepsHash = \"${{ needs.fetch-repo-and-deps-hashes.outputs.NPM_DEPS_HASH_ESCAPED }}\";/" flake.nix
       - name: update git repo hash
@@ -87,9 +97,12 @@ jobs:
           git config --global user.email 'florian.sanders@clever-cloud.com'
       - name: git status
         run: git status
+      - name: cat flake
+        run: cat flake.nix
       - name: create tag
         run: |
           git add .
-          git commit -m "new release ${{ GITHUB_REF_NAME }}"
-          git tag -a ${{ GITHUB_REF_NAME }} -m "Release ${{ GITHUB_REF_NAME }}"
-          git push -f origin ${{ GITHUB_REF_NAME }}
+          git commit -m "new release ${{ github.ref_name }}"
+          git tag -a ${{ github.ref_name }} -m "Release ${{ github.ref_name }}"
+          git push -f --tags
+          git push -f
