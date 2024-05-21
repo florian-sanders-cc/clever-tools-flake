@@ -3,44 +3,56 @@
 
   inputs = {
     nixpkgs.url = "github:Nixos/nixpkgs/nixos-unstable";
-
-    systems.url = "github:nix-systems/default-linux";
   };
 
-  outputs = inputs @ { self, nixpkgs, systems, ... }: {
-    defaultPackage.x86_64-linux = with import nixpkgs { system = "x86_64-linux"; };
-      buildNpmPackage rec {
-        pname = "clever-tools";
+  outputs = { self, nixpkgs }:
+    let
+      # Systems supported
+      allSystems = [
+        "x86_64-linux" # 64-bit Intel/AMD Linux
+        "aarch64-linux" # 64-bit ARM Linux
+        "x86_64-darwin" # 64-bit Intel macOS
+        "aarch64-darwin" # 64-bit ARM macOS
+      ];
 
-        version = "0.0.0";
+      # Helper to provide system-specific attributes
+      forAllSystems = f: nixpkgs.lib.genAttrs allSystems (system: f {
+        pkgs = import nixpkgs { inherit system; };
+      });
+    in
+    {
+      packages = forAllSystems ({ pkgs }: {
+        default = pkgs.buildNpmPackage rec {
+          pname = "clever-tools";
 
-        nodejs = nodejs-18_x;
+          version = "0.0.0";
 
-        src = fetchFromGitHub {
-          owner = "CleverCloud";
-          repo = "clever-tools";
-          rev = "${version}";
-          hash = "sha256-v60evwLnMxU5EGILAvCTtMsO0fWpjfc0TA7upHcrq9U=";
+          nodejs = pkgs.nodejs-18_x;
+
+          src = pkgs.fetchFromGitHub {
+            owner = "CleverCloud";
+            repo = "clever-tools";
+            rev = "${version}";
+            hash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+          };
+
+          npmDepsHash = "sha256-AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=";
+
+          dontNpmBuild = true;
+
+          postInstall = ''
+            mkdir -p $out/share/{bash-completion/completions,zsh/site-functions}
+            $out/bin/clever --bash-autocomplete-script $out/bin/clever > $out/share/bash-completion/completions/clever
+            $out/bin/clever --zsh-autocomplete-script $out/bin/clever > $out/share/zsh/site-functions/_clever
+          '';
+
+          meta = {
+            description = "";
+            homepage = "";
+            maintainers = with pkgs.lib.maintainers;
+              [ ];
+          };
         };
-
-        npmDepsHash = "sha256-AK1CNtFTM3wgel5L2ekmXWHZhIerqKPd5i7X/kJm7No=";
-
-        dontNpmBuild = true;
-
-        postInstall = ''
-          mkdir -p $out/share/{bash-completion/completions,zsh/site-functions}
-          $out/bin/clever --bash-autocomplete-script $out/bin/clever > $out/share/bash-completion/completions/clever
-          $out/bin/clever --zsh-autocomplete-script $out/bin/clever > $out/share/zsh/site-functions/_clever
-        '';
-
-        meta = {
-          description = "";
-          homepage = "";
-          # license = lib.licenses.apache;
-          maintainers = with lib.maintainers;
-            [ ];
-        };
-      };
-  };
-
+      });
+    };
 }
