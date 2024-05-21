@@ -106,3 +106,6 @@ jobs:
           git tag -a ${{ github.ref_name }} -m "Release ${{ github.ref_name }}"
           git push -f --tags
           git push -f
+          git checkout master
+          git merge ${{ github.ref_name }}
+          git push -f
