@@ -103,6 +103,7 @@ jobs:
         run: |
           git add .
           git commit -m "new release ${{ github.ref_name }}"
+          git push origin ${{ github.ref_name }}:master
           git tag -a ${{ github.ref_name }} -m "Release ${{ github.ref_name }}"
           git push -f --tags
           git push -f
