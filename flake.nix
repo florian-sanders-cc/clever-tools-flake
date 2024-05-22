@@ -25,7 +25,7 @@
         default = pkgs.buildNpmPackage rec {
           pname = "clever-tools";
 
-          version = "3.2.0";
+          version = "3.3.0";
 
           nodejs = pkgs.nodejs-18_x;
 
@@ -33,10 +33,10 @@
             owner = "CleverCloud";
             repo = "clever-tools";
             rev = "${version}";
-            hash = "sha256-sciOkmjjdKLpJMfODuhNRSchfJrWoNagZlJnYPdJU0A=";
+            hash = "sha256-ZlFbWqLeiyRpQRctwXb1OfVa3tLLamaXxD5VlTEltx0=";
           };
 
-          npmDepsHash = "sha256-V72b7H4tswim9gaK5tKphyJr0x8NSAnZwIq6NWOYrM4=";
+          npmDepsHash = "sha256-1LOMyVALAfOoUbydACmbzO6TmTN4wWQP+KUfCpw+zg4=";
 
           dontNpmBuild = true;
 
